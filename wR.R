@@ -3,10 +3,10 @@
 # --------------------------- #
 
 #' @export
-`fb_-+` = \(a, b) c(a - b, a + b)
+`fb_-+` = function(a, b) c(a - b, a + b)
 
 #' @export 
-fb_identifyOS = \() {
+fb_identifyOS = function() {
   switch(.Platform$OS.type, 
          unix = { print("This OS is either 'Linux' or 'Mac'.") }, 
          windows  = { print("This OS is 'Windows'.") }
@@ -14,13 +14,13 @@ fb_identifyOS = \() {
 } 
 
 #' @export
-fb_DTput = \(x) {
+fb_DTput = function(x) {
   attr(x, which = ".internal.selfref") = NULL 
   dput(x)
 }
 
 #' @export
-fb_library = \(ls) {
+fb_library = function(ls) {
   if(!is.list(ls)) stop("Argument 'ls' is not a list.")
   invisible(lapply(ls, library, character.only = TRUE))
 }
@@ -93,7 +93,7 @@ fb_ordinaryOutlierD <- \(vec, max_diff) {
 }
 
 #' @export
-fb_rollsumr = \(x, k, ...) {
+fb_rollsumr = function(x, k, ...) {
   stopifnot(is.numeric(x), is.integer(k))
   res = rep(NA, length(x))
   for (i in seq_along(x)) # this should be right-aligned
@@ -102,14 +102,14 @@ fb_rollsumr = \(x, k, ...) {
 }
 
 #' @export
-fb_split_df = \(x, f, ...) {
+fb_split_df = function(x, f, ...) {
   # preserves order  
   f = factor(f, levels = unique(f))
   split(x, f, ...)
 }
 
 #' export 
-fb_cbind_list = \(l, fill=NA, names=NULL, transpose=FALSE) {
+fb_cbind_list = function(l, fill=NA, names=NULL, transpose=FALSE) {
   # Note. If names are set and transpose=TRUE, names are not used yet. 
   stopifnot("Input is not in list format." = is.list(l))
   ll = lengths(l);  ml = max(ll)
@@ -122,16 +122,16 @@ fb_cbind_list = \(l, fill=NA, names=NULL, transpose=FALSE) {
 }
 
 #' export 
-fb_NApadToSameLength = \(l) {
+fb_NApadToSameLength = function(l) {
   stopifnot(is.list(l))
   lapply(l, `length<-`, max(lengths(l))) |> data.frame()
 }
 
 #' export 
-fb_rowVars = \(x, ...) rowSums((x - rowMeans(x, ...)) ^ 2L, ...) / (nrow(x) - 1L) 
+fb_rowVars = function(x, ...) rowSums((x - rowMeans(x, ...)) ^ 2L, ...) / (nrow(x) - 1L) 
 
 #' export 
-fb_rowMins = \(D, k=1L) {
+fb_rowMins = function(D, k=1L) {
   if(!(is.data.frame(D) | is.matrix(D))) stop("Object is neither data.frame nor matrix.")
   if(!all(sapply(D, is.numeric))) stop("Not all columns are numeric.")
   if(is.data.frame(D)) D = as.matrix(D)
@@ -139,14 +139,14 @@ fb_rowMins = \(D, k=1L) {
 }
 
 #' export 
-quickdf = \(l) { 
+quickdf = function(l) { 
   # https://adv-r.hadley.nz/perf-improve.html#as.data.frame
   class(l) = "data.frame"; attr(l, "row.names") = .set_row_names(length(l[[1L]])); l 
 }
 
 #' export 
 #' multiple numbers from string
-fb_numsFstr = \(y) Map(\(x) x[nchar(x) > 0L], strsplit(y, "\\D+"))
+fb_numsFstr = function(y) Map(\(x) x[nchar(x) > 0L], strsplit(y, "\\D+"))
 
 #' export
 #' Vectorized seq()
@@ -155,12 +155,12 @@ fb_Vseq = Vectorize(\(from, to) seq(from, to, by = 1L))
 #' export 
 #' replace values with first value by group 
 #' https://stackoverflow.com/questions/66376333/replace-all-values-with-first-observation-by-group
-fb_replaceAllButFirstByGroup = \(df, x, g) {
+fb_replaceAllButFirstByGroup = function(df, x, g) {
   df[(i <- !duplicated(df[g])), x][cumsum(i)]
 }
 
 #' export 
-fb_Mode = \(x) {
+fb_Mode = function(x) {
   if(length(x) <= 2L) return(x[[1L]])
   if(anyNA(x)) x = x[!is.na(x)]
   ux = unique(x); tab = tabulate(match(x, ux))
@@ -168,21 +168,21 @@ fb_Mode = \(x) {
 }
 
 #' export 
-fb_consecutive_id = \(x) with(rle(x), rep(seq_along(values), lengths)) 
+fb_consecutive_id = function(x) with(rle(x), rep(seq_along(values), lengths)) 
 
 #' export 
-fb_lead = \(x, k, fill = NA) c(x[-seq(k)], rep(fill, k))
+fb_lead = function(x, k, fill = NA) c(x[-seq(k)], rep(fill, k))
 
 #' export 
-fb_lag = \(x, k, fill = NA) c(rep(fill, k), head(x, -k))
+fb_lag = function(x, k, fill = NA) c(rep(fill, k), head(x, -k))
 
 #' export 
 #' Freedman-Diaconis rule
 #' https://stats.stackexchange.com/a/862/400850
-fb_FD = \(x, f=2L) f * IQR(x) / length(x)^(1L/3L)
+fb_FD = function(x, f=2L) f * IQR(x) / length(x)^(1L/3L)
 
 #' export 
-fb_QuarterDaysOfDate = \(x) {
+fb_QuarterDaysOfDate = function(x) {
   ## imports data.table() functions 
   stopifnot(inherits(x, "Date"))
   y = data.table::year(x)
@@ -195,7 +195,7 @@ fb_QuarterDaysOfDate = \(x) {
 }
 
 #' export 
-fb_rename = \(df, new, old, returndf = TRUE) {
+fb_rename = function(df, new, old, returndf = TRUE) {
   stopifnot(is.data.frame(df), length(old) == length(new), is.character(new))
   # this check is porbably bad practice:
   if(! inherits(old, c("numeric", "character", "integer"))) 

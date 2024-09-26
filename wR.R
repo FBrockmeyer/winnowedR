@@ -30,32 +30,32 @@ fb_dfBn_Scc = function(r, rho, n) {
   # implementation of exact density function f(r) 
   # of sample correlation coefficient r, 
   # for data that follow a bivariate normal distribution: 
-  nr <- (n - 2L) * gamma(n - 1L) * (1L - rho ^ 2L) ^ ((n - 1L) / 2L) * 
+  nr = (n - 2L) * gamma(n - 1L) * (1L - rho ^ 2L) ^ ((n - 1L) / 2L) * 
     (1L - r ^ 2L) ^ ((n - 4L) / 2L)
-  dr <- sqrt(2L * pi) * gamma(n - .5) * (1L - rho * r) ^ (n - 1.5)
-  ghf <- hypergeo::hypergeo(A = .5, B = .5, C = .5 * (2L * n - 1L), 
+  dr = sqrt(2L * pi) * gamma(n - .5) * (1L - rho * r) ^ (n - 1.5)
+  ghf = hypergeo::hypergeo(A = .5, B = .5, C = .5 * (2L * n - 1L), 
                             z = .5 * (rho * r + 1L)) 
   ghf * nr / dr
 }
 
 #' @export
-fb_DataEllipseFdist <- function(x, y, levels, col, legend = TRUE, ...) {
+fb_DataEllipseFdist = function(x, y, levels, col, legend = TRUE, ...) {
   stopifnot(is.vector(x), is.vector(y), length(x) == length(y))
-  if(missing(levels)) levels <- c(.2, .4, .6, .8)
-  if(missing(col)) col <-  colorRampPalette(colors = c("green", "yellow"))(length(levels)) 
+  if(missing(levels)) levels = c(.2, .4, .6, .8)
+  if(missing(col)) col = colorRampPalette(colors = c("green", "yellow"))(length(levels)) 
   message("Notice, function expects two vectors of equal length.\n Assumes data tio be bivariate Normal.")
   stopifnot("Lengths of colour and level(s) vectors differ." =
               length(col) == length(levels))
   # car:::ellipse #
-  nseg <- 100L # := number of line segments; determination?
-  cm <- cov(cbind(x, y))
-  centre <- c(mean(x), mean(y))
+  nseg = 100L # := number of line segments; determination?
+  cm = cov(cbind(x, y))
+  centre = c(mean(x), mean(y))
   if (max(abs(cm - t(cm))) / max(abs(cm)) > 1e-10) 
     stop("The covariance matrix of `cbind(x,y)` must be a symmetric.")
-  angles <- (0L:nseg) * 2L * pi / nseg
-  uc <- cbind(cos(angles), sin(angles))
-  Q <- chol(cm, pivot = TRUE)
-  ord <- order(attr(Q, "pivot"))
+  angles = (0L:nseg) * 2L * pi / nseg
+  uc = cbind(cos(angles), sin(angles))
+  Q = chol(cm, pivot = TRUE)
+  ord = order(attr(Q, "pivot"))
   # car:::ellipse #
   lapply(seq_along(levels), \(i) {
     lines(t(centre + 
@@ -69,22 +69,22 @@ fb_DataEllipseFdist <- function(x, y, levels, col, legend = TRUE, ...) {
            legend = lapply(seq_along(levels), \(i) levels[[i]]),
            col = col, lwd = 2L, lty = "dashed", bty = "n", ...)
   }
-  x <- lapply(levels, \(i) {
-    r <- sqrt(2L * qf(i, 2L, length(x) - 1L))
+  x = lapply(levels, \(i) {
+    r = sqrt(2L * qf(i, 2L, length(x) - 1L))
     t(centre + r * t(uc %*% Q[, ord])) })
   invisible(x)
 }
 
 #' @export
 #' returns positions in vec
-fb_ordinaryOutlierD <- function(vec, max_diff) {
+fb_ordinaryOutlierD = function(vec, max_diff) {
   if(missing(vec))
     stop("Data vector is missing.")
   if(missing(max_diff))
     stop("Please set a value of maximum difference between consecutive data points.")
   if(length(na.omit(vec)) < 2L) return(numeric())
   for(i in seq_along(vec)[-1]) {
-    last_valid <- tail(!is.na(head(vec, i - 1L)), 1L)
+    last_valid = tail(!is.na(head(vec, i - 1L)), 1L)
     if(abs(vec[[i]] - last_valid) > max_diff) {
       vec[[i]] = NA
     }
@@ -124,7 +124,7 @@ fb_cbind_list = function(l, fill=NA, names=NULL, transpose=FALSE) {
 #' export 
 fb_NApadToSameLength = function(l) {
   stopifnot(is.list(l))
-  lapply(l, `length<-`, max(lengths(l))) |> data.frame()
+  lapply(l, `length<-`, max(lengths(l))) 
 }
 
 #' export 

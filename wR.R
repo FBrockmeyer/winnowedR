@@ -77,7 +77,7 @@ fb_DataEllipseFdist <- function(x, y, levels, col, legend = TRUE, ...) {
 
 #' @export
 #' returns positions in vec
-fb_ordinaryOutlierD <- \(vec, max_diff) {
+fb_ordinaryOutlierD <- function(vec, max_diff) {
   if(missing(vec))
     stop("Data vector is missing.")
   if(missing(max_diff))
